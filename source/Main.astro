@@ -1,71 +1,56 @@
 ---
-const products = [
-  {
-    id: "tee-funkin",
-    name: "Funkin Tee",
-    price: 59.9,
-    category: "Clothing",
-    description: "Soft cotton tee with an exclusive print.",
-    image: "https://picsum.photos/seed/tee/600/400",
-  },
-  {
-    id: "mug-boombox",
-    name: "Boombox Mug",
-    price: 34.5,
-    category: "Home",
-    description: "350ml ceramic mug.",
-    image: "https://picsum.photos/seed/mug/600/400",
-  },
-  {
-    id: "mousepad-xl",
-    name: "Mousepad XL",
-    price: 45,
-    category: "Accessories",
-    description: "Large mousepad with non-slip base.",
-    image: "https://picsum.photos/seed/mousepad/600/400",
-  },
-  {
-    id: "hoodie-prism",
-    name: "Prism Hoodie",
-    price: 149.9,
-    category: "Clothing",
-    description: "Warm hoodie with embroidered logo.",
-    image: "https://picsum.photos/seed/hoodie/600/400",
-  },
-  {
-    id: "cap-arrow",
-    name: "Arrow Cap",
-    price: 39.9,
-    category: "Accessories",
-    description: "Adjustable cap with arrow patch.",
-    image: "https://picsum.photos/seed/cap/600/400",
-  },
-  {
-    id: "poster-stage",
-    name: "Stage Poster",
-    price: 24.9,
-    category: "Home",
-    description: "A3 matte poster.",
-    image: "https://picsum.photos/seed/poster/600/400",
-  },
-];
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+  description: string;
+  image: string;
+}
 
+interface Project {
+  name: string;
+  title: string;
+  description: string;
+  lang: string;
+  locale: string;
+  currency: string;
+  themeColor: string;
+  accent: string;
+  background: string;
+  surface: string;
+  whatsapp: string;
+  storageKey: string;
+  products: Product[];
+}
+
+const { project } = Astro.props as { project: Project };
+const { products } = project;
 const categories = ["All", ...new Set(products.map((p) => p.category))];
 const format = (value: number) =>
-  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  value.toLocaleString(project.locale, {
+    style: "currency",
+    currency: project.currency,
+  });
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={project.lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f0f14" />
-    <title>BrenninhoShop</title>
+    <meta name="theme-color" content={project.themeColor} />
+    <meta name="description" content={project.description} />
+    <title>{project.title}</title>
   </head>
-  <body>
+  <body
+    data-phone={project.whatsapp}
+    data-storage={project.storageKey}
+    data-locale={project.locale}
+    data-currency={project.currency}
+  >
     <header class="top">
-      <strong>BrenninhoShop</strong>
+      <strong>{project.name}</strong>
       <button id="cart-open" class="cart-btn">
         Cart <span id="cart-count">0</span>
       </button>
@@ -141,13 +126,13 @@ const format = (value: number) =>
   </body>
 </html>
 
-<style is:global>
+<style
+  is:global
+  define:vars={{ accent: project.accent, bg: project.background, card: project.surface }}
+>
   :root {
-    --bg: #0f0f14;
-    --card: #1a1a22;
     --text: #f2f2f5;
     --muted: #9a9aa8;
-    --accent: #7c5cff;
   }
   * {
     box-sizing: border-box;
@@ -383,11 +368,12 @@ const format = (value: number) =>
 <script>
   type CartItem = { id: string; name: string; price: number; qty: number };
 
-  const storageKey = "brenninhoshop-cart";
-  const phone = "5500000000000";
-  const money = new Intl.NumberFormat("pt-BR", {
+  const config = document.body.dataset;
+  const storageKey = config.storage ?? "cart";
+  const phone = config.phone ?? "";
+  const money = new Intl.NumberFormat(config.locale ?? "en-US", {
     style: "currency",
-    currency: "BRL",
+    currency: config.currency ?? "USD",
   });
 
   const search = document.getElementById("search") as HTMLInputElement;
