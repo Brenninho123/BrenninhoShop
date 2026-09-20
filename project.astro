@@ -1,472 +1,70 @@
 ---
-const products = [
-  {
-    id: "tee-funkin",
-    name: "Funkin Tee",
-    price: 59.9,
-    category: "Clothing",
-    description: "Soft cotton tee with an exclusive print.",
-    image: "https://picsum.photos/seed/tee/600/400",
-  },
-  {
-    id: "mug-boombox",
-    name: "Boombox Mug",
-    price: 34.5,
-    category: "Home",
-    description: "350ml ceramic mug.",
-    image: "https://picsum.photos/seed/mug/600/400",
-  },
-  {
-    id: "mousepad-xl",
-    name: "Mousepad XL",
-    price: 45,
-    category: "Accessories",
-    description: "Large mousepad with non-slip base.",
-    image: "https://picsum.photos/seed/mousepad/600/400",
-  },
-  {
-    id: "hoodie-prism",
-    name: "Prism Hoodie",
-    price: 149.9,
-    category: "Clothing",
-    description: "Warm hoodie with embroidered logo.",
-    image: "https://picsum.photos/seed/hoodie/600/400",
-  },
-];
+import Main from "./source/Main.astro";
 
-const categories = ["All", ...new Set(products.map((p) => p.category))];
-const format = (value: number) =>
-  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const project = {
+  name: "BrenninhoShop",
+  title: "BrenninhoShop",
+  description: "a little shop :3",
+  lang: "en",
+  locale: "pt-BR",
+  currency: "BRL",
+  themeColor: "#0f0f14",
+  accent: "#7c5cff",
+  background: "#0f0f14",
+  surface: "#1a1a22",
+  whatsapp: "5500000000000",
+  storageKey: "brenninhoshop-cart",
+  products: [
+    {
+      id: "tee-funkin",
+      name: "Funkin Tee",
+      price: 59.9,
+      category: "Clothing",
+      description: "Soft cotton tee with an exclusive print.",
+      image: "https://picsum.photos/seed/tee/600/400",
+    },
+    {
+      id: "mug-boombox",
+      name: "Boombox Mug",
+      price: 34.5,
+      category: "Home",
+      description: "350ml ceramic mug.",
+      image: "https://picsum.photos/seed/mug/600/400",
+    },
+    {
+      id: "mousepad-xl",
+      name: "Mousepad XL",
+      price: 45,
+      category: "Accessories",
+      description: "Large mousepad with non-slip base.",
+      image: "https://picsum.photos/seed/mousepad/600/400",
+    },
+    {
+      id: "hoodie-prism",
+      name: "Prism Hoodie",
+      price: 149.9,
+      category: "Clothing",
+      description: "Warm hoodie with embroidered logo.",
+      image: "https://picsum.photos/seed/hoodie/600/400",
+    },
+    {
+      id: "cap-arrow",
+      name: "Arrow Cap",
+      price: 39.9,
+      category: "Accessories",
+      description: "Adjustable cap with arrow patch.",
+      image: "https://picsum.photos/seed/cap/600/400",
+    },
+    {
+      id: "poster-stage",
+      name: "Stage Poster",
+      price: 24.9,
+      category: "Home",
+      description: "A3 matte poster.",
+      image: "https://picsum.photos/seed/poster/600/400",
+    },
+  ],
+};
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BrenninhoShop</title>
-  </head>
-  <body>
-    <header class="top">
-      <strong>BrenninhoShop</strong>
-      <button id="cart-open" class="cart-btn">
-        Cart <span id="cart-count">0</span>
-      </button>
-    </header>
-
-    <main class="wrap">
-      <input id="search" type="search" placeholder="Search products..." />
-
-      <div class="filters">
-        {
-          categories.map((c) => (
-            <button class={c === "All" ? "chip active" : "chip"} data-category={c}>
-              {c}
-            </button>
-          ))
-        }
-      </div>
-
-      <section class="grid">
-        {
-          products.map((p) => (
-            <article
-              class="card"
-              data-id={p.id}
-              data-name={p.name}
-              data-price={p.price}
-              data-category={p.category}
-            >
-              <img src={p.image} alt={p.name} loading="lazy" />
-              <div class="info">
-                <h3>{p.name}</h3>
-                <p class="desc">{p.description}</p>
-                <div class="row">
-                  <span class="price">{format(p.price)}</span>
-                  <button class="add" data-add={p.id}>Add</button>
-                </div>
-              </div>
-            </article>
-          ))
-        }
-      </section>
-
-      <p id="empty" hidden>No products found.</p>
-    </main>
-
-    <div id="overlay" class="overlay"></div>
-    <aside id="drawer" class="drawer">
-      <div class="drawer-head">
-        <strong>Your cart</strong>
-        <button id="cart-close" class="chip">Close</button>
-      </div>
-      <div id="cart-list" class="cart-list"></div>
-      <div class="drawer-foot">
-        <div class="total">
-          <span>Total</span>
-          <strong id="cart-total">R$ 0,00</strong>
-        </div>
-        <button id="checkout" class="checkout">Checkout on WhatsApp</button>
-        <button id="clear" class="link">Clear cart</button>
-      </div>
-    </aside>
-  </body>
-</html>
-
-<style is:global>
-  :root {
-    --bg: #0f0f14;
-    --card: #1a1a22;
-    --text: #f2f2f5;
-    --muted: #9a9aa8;
-    --accent: #7c5cff;
-  }
-  * {
-    box-sizing: border-box;
-    margin: 0;
-  }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, sans-serif;
-  }
-  button {
-    font: inherit;
-    cursor: pointer;
-    border: none;
-    color: var(--text);
-  }
-  .top {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.9rem 1rem;
-    background: var(--card);
-  }
-  .cart-btn {
-    background: var(--accent);
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-  }
-  .wrap {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-  #search {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid #333;
-    background: var(--card);
-    color: var(--text);
-    font-size: 1rem;
-  }
-  .filters {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin: 1rem 0;
-  }
-  .chip {
-    background: var(--card);
-    padding: 0.45rem 1rem;
-    border-radius: 999px;
-  }
-  .chip.active {
-    background: var(--accent);
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-  }
-  .card {
-    background: var(--card);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .card img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    display: block;
-  }
-  .info {
-    padding: 0.8rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  .desc {
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
-  .row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.3rem;
-  }
-  .price {
-    color: var(--accent);
-    font-weight: 700;
-  }
-  .add {
-    background: var(--accent);
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-  }
-  #empty {
-    text-align: center;
-    color: var(--muted);
-    margin-top: 2rem;
-  }
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 10;
-  }
-  .overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: min(380px, 100%);
-    background: var(--card);
-    transform: translateX(100%);
-    transition: transform 0.25s;
-    z-index: 11;
-    display: flex;
-    flex-direction: column;
-  }
-  .drawer.open {
-    transform: translateX(0);
-  }
-  .drawer-head,
-  .drawer-foot {
-    padding: 1rem;
-  }
-  .drawer-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .cart-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bg);
-    padding: 0.6rem 0.8rem;
-    border-radius: 10px;
-  }
-  .qty {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .qty button {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: var(--card);
-  }
-  .total {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-  }
-  .checkout {
-    width: 100%;
-    background: #25d366;
-    color: #06210f;
-    font-weight: 700;
-    padding: 0.8rem;
-    border-radius: 10px;
-  }
-  .link {
-    width: 100%;
-    background: none;
-    color: var(--muted);
-    margin-top: 0.6rem;
-  }
-  .empty-cart {
-    text-align: center;
-    color: var(--muted);
-    padding: 2rem 0;
-  }
-</style>
-
-<script>
-  type CartItem = { id: string; name: string; price: number; qty: number };
-
-  const storageKey = "brenninhoshop-cart";
-  const phone = "5500000000000";
-  const money = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-
-  const search = document.getElementById("search") as HTMLInputElement;
-  const chips = document.querySelectorAll<HTMLButtonElement>(".filters .chip");
-  const cards = document.querySelectorAll<HTMLElement>(".card");
-  const empty = document.getElementById("empty") as HTMLElement;
-  const drawer = document.getElementById("drawer") as HTMLElement;
-  const overlay = document.getElementById("overlay") as HTMLElement;
-  const list = document.getElementById("cart-list") as HTMLElement;
-  const totalEl = document.getElementById("cart-total") as HTMLElement;
-  const countEl = document.getElementById("cart-count") as HTMLElement;
-
-  let category = "All";
-
-  const load = (): CartItem[] => {
-    try {
-      return JSON.parse(localStorage.getItem(storageKey) ?? "[]");
-    } catch {
-      return [];
-    }
-  };
-
-  let cart = load();
-
-  const save = () => localStorage.setItem(storageKey, JSON.stringify(cart));
-
-  const applyFilters = () => {
-    const term = search.value.trim().toLowerCase();
-    let visible = 0;
-    cards.forEach((card) => {
-      const nameOk = (card.dataset.name ?? "").toLowerCase().includes(term);
-      const categoryOk = category === "All" || card.dataset.category === category;
-      const show = nameOk && categoryOk;
-      card.style.display = show ? "" : "none";
-      if (show) visible++;
-    });
-    empty.hidden = visible > 0;
-  };
-
-  const renderCart = () => {
-    const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    const total = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
-    countEl.textContent = String(count);
-    totalEl.textContent = money.format(total);
-
-    if (cart.length === 0) {
-      list.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
-      return;
-    }
-
-    list.innerHTML = cart
-      .map(
-        (item) => `
-        <div class="cart-item">
-          <div>
-            <div>${item.name}</div>
-            <small>${money.format(item.price)}</small>
-          </div>
-          <div class="qty">
-            <button data-action="dec" data-id="${item.id}">-</button>
-            <span>${item.qty}</span>
-            <button data-action="inc" data-id="${item.id}">+</button>
-          </div>
-        </div>`
-      )
-      .join("");
-  };
-
-  const update = () => {
-    save();
-    renderCart();
-  };
-
-  const toggleDrawer = (open: boolean) => {
-    drawer.classList.toggle("open", open);
-    overlay.classList.toggle("open", open);
-  };
-
-  const addToCart = (id: string) => {
-    const card = document.querySelector<HTMLElement>(`.card[data-id="${id}"]`);
-    if (!card) return;
-    const existing = cart.find((item) => item.id === id);
-    if (existing) {
-      existing.qty++;
-    } else {
-      cart.push({
-        id,
-        name: card.dataset.name ?? "",
-        price: Number(card.dataset.price ?? 0),
-        qty: 1,
-      });
-    }
-    update();
-  };
-
-  search.addEventListener("input", applyFilters);
-
-  chips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      category = chip.dataset.category ?? "All";
-      chips.forEach((c) => c.classList.toggle("active", c === chip));
-      applyFilters();
-    });
-  });
-
-  document.querySelectorAll<HTMLButtonElement>("[data-add]").forEach((button) => {
-    button.addEventListener("click", () => {
-      addToCart(button.dataset.add ?? "");
-      toggleDrawer(true);
-    });
-  });
-
-  list.addEventListener("click", (event) => {
-    const target = (event.target as HTMLElement).closest<HTMLButtonElement>("button");
-    if (!target) return;
-    const item = cart.find((i) => i.id === target.dataset.id);
-    if (!item) return;
-    item.qty += target.dataset.action === "inc" ? 1 : -1;
-    cart = cart.filter((i) => i.qty > 0);
-    update();
-  });
-
-  document.getElementById("cart-open")?.addEventListener("click", () => toggleDrawer(true));
-  document.getElementById("cart-close")?.addEventListener("click", () => toggleDrawer(false));
-  overlay.addEventListener("click", () => toggleDrawer(false));
-
-  document.getElementById("clear")?.addEventListener("click", () => {
-    cart = [];
-    update();
-  });
-
-  document.getElementById("checkout")?.addEventListener("click", () => {
-    if (cart.length === 0) return;
-    const lines = cart.map(
-      (item) => `${item.qty}x ${item.name} - ${money.format(item.price * item.qty)}`
-    );
-    const total = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
-    const message = `Hi! I want to order:\n${lines.join("\n")}\nTotal: ${money.format(total)}`;
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
-  });
-
-  renderCart();
-  applyFilters();
-</script>
+<Main project={project} />
